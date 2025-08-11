@@ -1,0 +1,207 @@
+!@encoding CP1252
+model TABUKCOL
+	!uses 'mmsystems'
+	declarations
+		Attribute=record
+			x: integer
+			i: integer
+		end-record
+		Move=record
+			x: integer
+			i: integer
+			j: integer
+		end-record
+		! inicio, fin: real
+	end-declarations
+	
+	forward procedure ReadData
+	forward function random_init: integer
+	forward function GetCandidates: set of integer
+	forward function GetRandomMove:	Move
+	forward function EvalMove(move: Move): integer	
+	forward function IsTabu(move: Move, TabuList: array(range) of Attribute): boolean	
+	forward function AspirationCriterion(change: integer): boolean
+	forward procedure MakeMove(move: Move)
+	forward procedure UpdateTabuList(move: Move, iter: integer, size: integer)
+	
+	declarations
+		delta: array(V:set of integer) of set of integer
+		K: integer
+		nbiter, nbmax: integer
+		rep: integer
+		T: integer
+		S, Sstar: array(range) of set of integer
+		TabuList: dynamic array(range) of Attribute
+		C: set of integer
+		f, fstar: integer
+	end-declarations
+	
+	ReadData
+	
+	writeln("Número de clases de color: ")
+	read(K)
+	writeln("Número máximo de iteraciones: ")
+	read(nbmax)
+	writeln("Número de soluciones vecinas: ")
+	read(rep)
+	writeln("Iteraciones para atributo tabú: ")
+	read(T)
+	
+	f:=random_init
+	fstar:=f
+	forall(i in 1..K) Sstar(i):=S(i)
+	nbiter:=1
+	while(fstar>0 and nbiter<nbmax) do
+		!Get candidate node set
+		C:=GetCandidates
+		!Generate at most rep candidate neighbor solutions
+		minDelta:=MAX_INT
+		forall(i in 1..rep) do
+			move:=GetRandomMove
+			Delta:=EvalMove(move)
+			if IsTabu(move,TabuList) then
+				if AspirationCriterion(Delta) then
+					if Delta<minDelta then
+						minDelta:=Delta
+						move_selected:=move
+					end-if
+				end-if
+			elif Delta<minDelta then
+				minDelta:=Delta
+				move_selected:=move
+			end-if
+			if minDelta<0 then
+				break
+			end-if
+		end-do
+		!Perform best move
+		MakeMove(move_selected)
+		!Update objective
+		f+=minDelta
+		!If best solution so far update solution
+		if f<fstar then
+			fstar:=f
+			writeln("Iteration: ", strfmt(nbiter,6), " Illegal edges: ", strfmt(f,6))
+			forall(i in 1..K) Sstar(i):=S(i)
+		end-if
+		!Update tabu restrictions
+		UpdateTabuList(move,nbiter,T)
+		!Update iterations
+		nbiter+=1
+	end-do
+	if fstar=0 then
+		forall(k in 1..K) writeln("Clase ",strfmt(k,3), ": ", Sstar(k))
+	else		
+		writeln("No se pudo encontrar una solución factible")
+	end-if
+	
+	procedure ReadData
+		declarations
+			filename: string
+			i,j: integer
+		end-declarations
+		writeln("Nombre del archivo de datos:")
+		read(filename)
+		fopen(filename, F_INPUT)
+		while (not iseof) do
+			read(i)
+			read(j)
+			delta(i)+={j}
+			delta(j)+={i}
+		end-do
+		fclose(F_INPUT)
+	end-procedure
+	
+	function random_init: integer
+		declarations
+			obj:integer
+		end-declarations
+		forall( i in V )do
+			S(integer(round(random*K+0.5))) += {i}
+		end-do
+		obj := 0
+		forall(color in 1..K) do
+			forall(i, j in S(color) | i<j and j in delta(i)) do
+				obj += 1
+			end-do
+		end-do
+		returned := obj
+	end-function
+	
+	function GetCandidates: set of integer
+		declarations
+			candidatos: set of integer
+		end-declarations
+		forall(a in 1..K)do
+			forall(i, j in S(a) | i<j and j in delta(i)) candidatos += {i,j}
+		end-do
+		returned:= candidatos
+	end-function
+	
+	function GetRandomMove:	Move
+		declarations
+			mov:Move
+			same_class: boolean
+		end-declarations
+		ale:=integer(round(random*getsize(C)+0.5))
+		mov.x:=C(ale)
+		forall(k in 1..K) do
+			if mov.x in S(k) then
+				mov.i:=k
+			end-if
+		end-do
+		same_class := true
+		mov.j := integer(round(random*K+0.5))
+		while (same_class) do
+			if (mov.i = mov.j) then
+				mov.j := integer(round(random*K+0.5))
+			else 
+				same_class := false
+			end-if
+		end-do
+		returned:= mov
+	end-function
+	
+	function EvalMove(move: Move): integer
+		returned:= getsize(S(move.j)*delta(move.x))-getsize(S(move.i)*delta(move.x))
+	end-function
+	
+	function IsTabu(move: Move, TabuList: array(range) of Attribute): boolean
+		declarations
+			tabu: boolean
+			m: Attribute
+		end-declarations
+		m.x:= move.x
+		m.i:= move.j
+		tabu:= false
+		forall (i in 1..getsize(TabuList)) do
+			if m.x = TabuList(i).x and m.i=TabuList(i).i then tabu:= true
+			end-if
+		end-do
+		returned:= tabu
+	end-function
+	
+	function AspirationCriterion(change: integer): boolean
+		if(change+f<fstar) then
+			returned:= true
+		else
+			returned:= false
+		end-if
+	end-function
+	
+	procedure MakeMove(move: Move)
+		S(move.j)+={move.x}
+		S(move.i)-={move.x}
+	end-procedure
+	
+	procedure UpdateTabuList(move: Move, iter: integer, size: integer)
+		pos:= iter mod size
+		if pos = 0 then
+			pos:= size
+		end-if
+		TabuList(pos).x := move.x
+		TabuList(pos).i := move.i
+	end-procedure
+	
+end-model
+

@@ -1,0 +1,120 @@
+!@encoding CP1252
+model Kruskal
+	forward procedure ReadDataFile(filename: string)
+	forward function argmin: integer
+	forward procedure UpdateF
+	
+	declarations
+		V: set of integer !Conjunto de vértices o nodos
+		edges=record  !Tipo de dato arista
+			i: integer !Primer nodo de la arista
+			j: integer !Segundo nodo de la arista
+			cost: real !Costo de la arista
+		end-record
+		alfa: real		
+		g: array(V) of integer
+		E: dynamic array(range) of edges !Arreglo de las aristas del grafo
+		f: real !Valor de la función objetivo 
+		F: set of integer !Conjunto de elementos factibles
+		S: dynamic array(range) of edges !Aristas del árbol generador
+
+		d: dynamic array (range, range) of real ! Distancia entre los nodos
+		filename: string !Nombre del archivo de datos
+		edgestar: integer !Índice de la arista seleccionada
+		Sedges: integer !Índice en el arreglo de aristas del árbol
+		n: integer
+	end-declarations
+	
+	writeln("Data file name: ")
+	read(filename)
+	
+	writeln('Inserte un alfa en [0,1]')
+	read(alfa)
+	
+	ReadDataFile(filename)
+	
+	declarations
+		label: array(V) of integer !Arreglo de etiquetas de las componente conexas
+	end-declarations
+	
+	forall(i in V) label(i):=i
+	f:=0
+	F:={1..getsize(E)}
+	Sedges:=0
+	writeln("Aristas del árbol generador")
+	while(Sedges < n) do
+		edgestar:=argmin
+		g(E(edgestar).i)+=1
+		g(E(edgestar).j)+=1
+		Sedges:=Sedges+1
+		S(Sedges):=E(edgestar)
+		writeln("{",S(Sedges).i,",",S(Sedges).j,"} con costo ",S(Sedges).cost)
+		writeln(g)
+		f:=f+S(Sedges).cost
+		UpdateF
+	end-do
+	writeln("Objective function value: ", f)
+	
+	ReadDataFile(filename)
+	
+	function argmin: integer
+		declarations
+			RCL: dynamic array(range) of integer
+		end-declarations
+		gmin:= min(i in F) E(i).cost
+		gmax:= max(i in F) E(i).cost	
+		u:= gmin+alfa*(gmax-gmin)
+		delcell(RCL)
+		cont:=0
+		forall(i in F | E(i).cost<=u) do
+			cont+=1
+			RCL(cont):=i
+		end-do
+		rand:=integer(round(random*cont+0.5))
+		returned:=RCL(rand)	
+	end-function
+	
+	procedure ReadDataFile(f: string) 
+		declarations
+			edge: edges 
+			nbedges: integer 
+		end-declarations
+		fopen(f, F_INPUT)
+		nbedges := 0
+		read(n)
+		forall(ii,jj in 1..n | ii < jj) do
+			read(d(ii,jj))
+			edge.i := ii
+			edge.j := jj
+			edge.cost := d(ii,jj)
+			nbedges := nbedges + 1
+			E(nbedges) := edge
+			V := V + {edge.i, edge.j}
+		end-do
+	end-procedure
+	
+	procedure UpdateF
+        declarations
+            S: set of integer
+            l: integer
+        end-declarations
+        
+        l := label(E(edgestar).j)
+        forall(j in V) do
+            if label(j) = l then
+                label(j) := label(E(edgestar).i)
+            end-if
+        end-do
+        S := F
+        F := {}
+     
+        forall(k in S) do
+            if (g(E(k).i)<2) and (g(E(k).j)<2) then
+                if (label(E(k).i)<>label(E(k).j)) or (Sedges=n-1) then
+                    F:=F+{k}
+                end-if
+            end-if
+        end-do
+    end-procedure
+	
+end-model

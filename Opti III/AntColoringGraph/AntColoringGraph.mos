@@ -1,0 +1,154 @@
+!@encoding CP1252
+model ModelName
+forward procedure ReadDataFile
+forward function arg_max(A: set of integer) : integer
+forward function deg(A: set of integer, v: integer): integer
+forward procedure update_cmin
+forward procedure update_dsat
+forward function tao2(v:integer):real
+forward function probabilidad(v:integer):real
+declarations
+delta: dynamic array (range) of set of integer  
+n: integer
+end-declarations
+ReadDataFile
+declarations
+	cmin: array(1..n) of integer
+	delta_M: array(1..n,1..n) of real
+	dsat: array(1..n) of integer
+	V: array(1..n) of set of integer 
+	A: set of integer 
+	M: array(1..n,1..n) of real
+	S_cero: array(1..n) of set of integer
+	rho: real
+	alpha: real
+	beta: real
+end-declarations
+rho:=0.5
+nants:=4
+ncycles_max:=3
+alpha:=1
+beta:=4
+!
+forall(i,j in 1..n) M(i,j):=1 !initialization of the trail between pairs of non adjacent vertices
+f_cero:=MAX_INT
+forall(ncycles in 1..ncycles_max)do
+	forall(r,s in 1..n) delta_M(r,s):=0
+	forall(a in 1..nants)do
+		delcell(V) !cambiar a vaciado automatico
+		! colour the graph by means of a constructive method (cambiar a funcion?)
+		forall(i in 1..n)cmin(i):=1
+		forall(i in 1..n)dsat(i):=0
+		A:=1..n
+		v:=arg_max(A)
+		V(1):=V(1)+{v}
+		q:=1
+		forall(i in 2..n)do
+			update_cmin
+			update_dsat
+			A:=A-{v}
+			!hacefr funcion psi
+			auxiliar:=0.0
+			forall(posibilidades in 1..n)do
+				if probabilidad(posibilidades)>0 then
+					auxiliar+=probabilidad(posibilidades)
+					if auxiliar >= random then
+						v:=posibilidades
+						break
+						end-if
+				end-if
+			end-do !declarar c como una variable
+			V(cmin(v)):=V(cmin(v))+{v}
+			!determinar el color de la solucion !cambio
+			if cmin(v)=q+1 then
+				q:=q+1
+			end-if
+		end-do
+		if q<f_cero then
+				forall(i in 1..n)do
+					S_cero(i):=V(i)
+				end-do
+				writeln("MEJORA DE SOLUCION")
+				writeln("iteracion ",ncycles, " con hormiga ",a, " valor de q: ",q)
+				f_cero:=q
+		else
+				writeln("iteracion ",ncycles, " con hormiga ",a, " sin mejora")
+		end-if
+		forall(j in 1..q)do
+			forall(r,s in V(j))do
+				delta_M(r,s):=delta_M(r,s)+1/q
+			end-do
+		end-do
+	end-do
+	forall(r,s in 1..n)do
+	M(r,s):=rho*M(r,s)+delta_M(r,s)
+	end-do
+end-do
+writeln("Numero de clases de color: ",f_cero)
+forall(i in 1..f_cero)do
+writeln("C(",i,"): ",V(i))
+end-do
+procedure update_cmin
+	forall(u in 1..n)do
+		cmin(u):=min(k in 1..getsize(V) | delta(u)*V(k)={}) k
+	end-do 
+end-procedure
+procedure update_dsat
+forall(u in 1..n, i in 1..getsize(V))do
+		if delta(u)*V(i)<>{}then
+			dsat(u)+=1
+		end-if
+end-do
+end-procedure
+procedure ReadDataFile
+    declarations
+        f: string
+        i, j: integer  ! i, j son nodos
+    end-declarations
+    writeln("Archivo de datos: ")
+    read(f)
+    fopen(f, F_INPUT)
+    while (not iseof) do
+        read(i)
+        read(j)
+        delta(i) += {j}  ! Agregar j como adyacente de i
+        delta(j) += {i}  ! Agregar i como adyacente de j
+    end-do
+    n:=getsize(delta)
+end-procedure
+function arg_max(A: set of integer) : integer
+mejor_valor:=0
+forall(nodo in A)do
+	if deg(A,nodo)>mejor_valor then
+		mejor_valor:=deg(A,nodo)
+		mejor_nodo:=nodo
+	end-if
+end-do
+returned:=mejor_nodo
+end-function
+function deg(A: set of integer, v: integer): integer
+	returned:=getsize(A*delta(v))
+end-function
+function tao2(v:integer):real
+c:=cmin(v)
+if V(c)={} then
+returned:=1
+else
+	suma:=sum(x in V(c)) M(x,v)
+	returned:= suma/getsize(V(c))
+	end-if
+end-function
+
+function probabilidad(v:integer):real
+	arriba:=(tao2(v)^alpha)*dsat(v)^beta
+	normalizacion:=0.0
+	forall(o in A)do
+	normalizacion:=normalizacion+(tao2(o)^alpha)*dsat(o)^beta
+	end-do
+	if v in A then
+	returned:=arriba/normalizacion
+	else 
+		returned:=0
+		end-if
+end-function
+end-model

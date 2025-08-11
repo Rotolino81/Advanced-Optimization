@@ -1,0 +1,105 @@
+!@encoding CP1252
+model Hormigas
+
+declarations
+	n: integer
+	File: string
+end-declarations
+File:="ATSP.txt"
+
+initializations from File
+	n 
+end-initializations
+
+declarations
+	m, t, nbiter: integer
+	alpha,beta,rho: real
+	d:array (1..n,1..n) of real
+end-declarations
+
+initializations from File
+	d
+end-initializations
+
+writeln("Número de hormigas")
+read(m)
+writeln("Número de iteraciones sin mejorar")
+read(nbiter)
+writeln("Factor de evaporación (valor entre 0 y 1):")
+read(rho)
+writeln("Valor del parámetro alpha: ")
+read(alpha)
+writeln("Valor del parámetro betha: ")
+read(beta)
+
+
+declarations
+	tau:array(1..n,1..n) of real
+	eta:array(1..n,1..n) of real
+	L:array(1..m) of real
+	N:array(1..m) of set of integer
+	Tour:array(1..m,1..n) of integer
+	deltaTau:array(1..n,1..n) of real
+	BestCost: real
+	BestTour: array(1..n) of integer
+	epsilon: real
+end-declarations
+
+epsilon:=min(i,j in 1..n | i<>j) 1/d(i,j)
+
+forall(i,j in 1..n | i<>j) do
+	tau(i,j):=epsilon
+	eta(i,j):=1/d(i,j)
+end-do
+
+BestCost:=MAX_REAL
+t:=0
+StopCriterion:=false
+
+while(not StopCriterion) do 
+	t+=1
+	forall(k in 1..m)N(k):=(1..n)
+	forall(k in 1..m) do
+		s:=integer(round(random*n+.5))
+		Tour(k,1):=s
+		N(k)-={s}
+		L(k):=0
+	end-do
+	forall(k in 1..m)do
+		forall(j in 2..n)do 
+			suma:=sum(l in N(k)) tau(Tour(k,j-1),l)^alpha*eta(Tour(k,j-1),l)^beta
+			acumulada:=0.0
+			aleatorio:=random
+			forall (l in N(k))do
+				acumulada+=tau(Tour(k,j-1),l)^alpha*eta(Tour(k,j-1),l)^beta/suma
+				if aleatorio<=acumulada then
+					lstar:=l
+					break
+				end-if
+			end-do
+			Tour(k,j):=lstar
+			N(k)-={lstar}
+			L(k)+=d(Tour(k,j-1),lstar)
+		end-do
+	end-do
+	forall(k in 1..m) do
+		L(k)+=d(Tour(k,n),Tour(k,1))
+		if L(k)<BestCost then
+			writeln("Iteración: ",strfmt(t,4)," Hormiga: ", strfmt(k,4), " Valor: ", strfmt(L(k),10,2))
+			BestCost:=L(k)
+			forall(l in 1..n) BestTour(l):=Tour(k,l)
+			last:=t
+		end-if		
+	end-do
+	forall(i,j in 1..n | i<>j) deltaTau(i,j):=0
+	forall(k in 1..m) do
+		forall(i in 1..n-1) deltaTau(Tour(k,i),Tour(k,i+1))+=1/L(k)
+		deltaTau(Tour(k,n),Tour(k,1))+=1/L(k)
+	end-do
+	forall(i,j in 1..n | i<>j) tau(i,j):=maxlist(1E-8,tau(i,j)*(1-rho)+deltaTau(i,j))
+	if t-last=nbiter then 
+		StopCriterion:=true
+	end-if
+end-do
+		
+end-model

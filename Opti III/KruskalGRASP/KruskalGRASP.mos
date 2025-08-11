@@ -1,0 +1,227 @@
+model GRASP
+	forward procedure ReadDataFile(filename: string)
+	forward procedure ConstructRCL(alpha:real)
+	forward procedure UpdateF
+	forward procedure RandomizedGreedy
+	forward procedure CreateT
+	forward function dist(a:integer, b:integer):real
+	forward procedure LocalSearch
+			
+	declarations
+		V: set of integer ! Conjunto de vértices o nodos
+		edges=record  ! Tipo de dato arista
+			i: integer ! Primer nodo de la arista
+			j: integer ! Segundo nodo de la arista
+			cost: real ! Costo de la arista
+		end-record
+		E: dynamic array(range) of edges ! Arreglo de las aristas del grafo
+		f: real ! Valor de la función objetivo 
+		F: set of integer ! Conjunto de elementos factibles
+		S: dynamic array(range) of edges ! Aristas del árbol generador
+		filename: string ! Nombre del archivo de datos
+		edgestar: integer ! Índice de la arista seleccionada
+		Sedges: integer ! Índice en el arreglo de aristas del árbol
+		d: dynamic array (range, range) of real ! Distancia entre los nodos
+		n: integer ! Número de nodos
+		alpha:real
+		numiter: integer
+		RCL: dynamic array(range) of integer ! Restricted Candidate List
+	end-declarations 
+	
+	writeln("Nombre del archivo de datos: ")
+	read(filename)
+	writeln("Valor de alpha entre 0 y 1")
+	read(alpha)
+	writeln("Número de iteraciones")
+	read(numiter)
+	
+	ReadDataFile(filename)
+	
+	declarations
+		label: array(V) of integer
+		grado: array(V) of integer
+		T,bestT: array (1..n+1) of integer 
+		visitados: array(V) of boolean
+		grado1: array(1..2) of integer
+		fbest: real
+		encontrada: integer
+		iteraciones: integer
+		aleatorio, contador, proximo: integer
+		istar, jstar: integer
+		delta_costo, delta: real
+		aux: integer
+	end-declarations
+	
+	fbest := MAX_REAL
+	iteraciones := 0
+	
+	while(iteraciones < numiter) do
+		iteraciones += 1
+		writeln
+		writeln("Iteración ", iteraciones)
+		RandomizedGreedy
+		LocalSearch
+		if f < fbest then
+			fbest := f
+			encontrada := iteraciones
+			forall(i in 1..n+1) bestT(i) := T(i)
+		end-if
+	end-do
+	
+	writeln
+	writeln("Mejor solución encontrada en la iteración ", encontrada)
+	writeln("Tour encontrado:", bestT)
+	writeln("Costo:", fbest)
+	
+	procedure ReadDataFile(f: string) 
+		declarations
+			edge: edges 
+			nbedges: integer 
+		end-declarations
+		fopen(f, F_INPUT)
+		nbedges := 0
+		read(n)
+		forall(ii,jj in 1..n | ii < jj) do
+			read(d(ii,jj))
+			edge.i := ii
+			edge.j := jj
+			edge.cost := d(ii,jj)
+			nbedges := nbedges + 1
+			E(nbedges) := edge
+			V := V + {edge.i, edge.j}
+		end-do
+	end-procedure
+	
+	procedure ConstructRCL(alpha: real)
+		delcell(RCL)
+		contador := 0
+		gmin := min(i in F) E(i).cost
+		gmax := max(i in F) E(i).cost
+		u := gmin + alpha * (gmax - gmin)
+		forall(i in F | E(i).cost <= u) do
+			contador := contador + 1
+			RCL(contador) := i
+		end-do
+	end-procedure
+	
+	procedure UpdateF
+		declarations
+			S: set of integer
+		end-declarations
+		l := label(E(edgestar).j)
+		forall(j in V) do
+			if label(j) = l then
+				label(j) := label(E(edgestar).i)
+			end-if
+		end-do
+		S := F
+		forall(k in S | label(E(k).i) = label(E(k).j)) F := F - {k}
+	end-procedure
+	
+	procedure RandomizedGreedy
+		forall(i in V) label(i) := i 
+		forall(i in V) grado(i) := 0 
+		f := 0 
+		F := {1..getsize(E)} 
+		Sedges := 0
+		while(F <> {}) do 
+			ConstructRCL(alpha)
+			aleatorio := integer(round(random*getsize(RCL)+0.5))
+			edgestar := RCL(aleatorio)
+			if (grado(E(edgestar).i) < 2) and (grado(E(edgestar).j) < 2) then 
+				Sedges := Sedges + 1 
+				S(Sedges) := E(edgestar)
+				grado(E(edgestar).i) := grado(E(edgestar).i) + 1
+				grado(E(edgestar).j) := grado(E(edgestar).j) + 1
+				f := f + S(Sedges).cost
+				UpdateF 
+			else
+				F := F - {edgestar} 
+			end-if	
+		end-do
+		contador := 0 
+		!!!
+		forall(i in V | grado(i) = 1) do 
+			contador := contador + 1
+			grado1(contador) := i
+		end-do
+		!!!
+		if contador = 2 then
+			Sedges := Sedges + 1
+			S(Sedges).i := grado1(1)
+			S(Sedges).j := grado1(2)
+			S(Sedges).cost := d(grado1(1),grado1(2))
+			f := f + S(Sedges).cost
+		end-if
+	end-procedure
+
+	procedure CreateT 
+		forall(i in V) visitados(i) := false 
+		nodoactual := S(1).i
+		T(1) := nodoactual 
+		visitados(nodoactual) := true
+		forall(k in 2..n) do
+			forall(i in 1..Sedges) do
+				if (S(i).i = nodoactual and not visitados(S(i).j)) then
+					proximo := S(i).j
+				elif (S(i).j = nodoactual and not visitados(S(i).i)) then
+					proximo := S(i).i
+				end-if
+			end-do
+			T(k) := proximo 
+			visitados(proximo) := true
+			nodoactual := proximo
+		end-do
+		T(n+1) := S(1).i 
+		writeln("Tour de la solución inicial:", T)
+		writeln("Costo:", f)
+	end-procedure
+	
+	function dist(a: integer, b: integer): real
+		if a < b then
+			returned := d(a,b)
+		else
+			returned := d(b,a)
+		end-if
+	end-function
+	
+	procedure LocalSearch
+		CreateT
+		iter := 0
+		repeat
+			iter := iter + 1
+			delta_costo := 0.
+			forall(i in 1..n-2) do
+				j := i + 2
+				while(j <= n-1 or (i > 1 and j <= n)) do
+					s := T(i)
+					t := T(i+1)
+					u := T(j)
+					v := T(j+1)
+					delta := dist(s,u) + dist(t,v) - dist(s,t) - dist(u,v)
+					if delta < delta_costo then
+						delta_costo := delta
+						istar := i
+						jstar := j
+					end-if
+					j := j + 1
+				end-do
+			end-do
+			if delta_costo < 0 then
+				f := f + delta_costo
+				a := istar + 1
+				b := jstar
+				while(a < b) do
+					aux := T(a)
+					T(a) := T(b)
+					T(b) := aux
+					a := a + 1
+					b := b - 1
+				end-do
+			end-if
+		until(delta_costo = 0)
+		writeln("Mejor tour:", T)
+		writeln("Costo:", f)
+	end-procedure
+end-model
+
