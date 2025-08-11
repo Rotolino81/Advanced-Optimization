@@ -1,0 +1,26 @@
+! Conjunto de los productos
+P: [1 2 3 4]
+
+! Conjunto de dias
+D: [1 2 3 4 5 6 7]
+
+! Para cada p in P; Costo(p): es el costo por unidad del producto p
+CostoD: [1.5 1.5 2.5 2.5]
+
+! Para cada p in P; variable prodH(p): es la production horaria para cada producto
+prodH: [100 250 190 150]
+
+! Para cada i, j in P; variable cambioH(i, j): es el tiepo perso para pasar da la production de i a j 
+cambioH: [0 6 3 4
+	  7 0 8 5
+	  6 3 0 4
+	  2 5 3 0]
+
+! Para cada p in P; variable InvIn(p): es la candida inicial en el inventario
+InvIn: [5000 7000 9000 8000]
+
+! Para cada p in P, d in D; variable Demanda(p, d): es la candidad que requesta del producto p el dia d
+Demanda:[1500 1700 1900 1000 2000 500 500
+	 	4000 500 1000 3000 500 1000 2000
+	 	2000 2000 3000 2000 2000 2000 500
+	 	3000 2000 2000 1000 1000 500 500]

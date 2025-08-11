@@ -1,0 +1,78 @@
+!@encoding CP1252 ! va a riconoscere i caratteri accentuati spagnoli 
+model ModelName ! funziona a blocchi, inizia 'model' e termina 'end-model'
+	
+	! Librerie: uses -> permette di usare librerie
+	uses "mmxprs" ! contiene le funzioni necessarie
+	
+	! blocco dei parametri	
+	parameters
+		File = "TransportePetroleo.txt" ! nome di dove sono contenuti i dati, file.txt
+		epsilon = 1E-3 ! soglia per cui i valori sono considerati 0
+	end-parameters
+	
+	! Def degli insiemi
+	declarations
+		! posso scrvere 'D, O: set of integer'
+		D: set of integer 
+		O: set of integer ! definisco insiemi e dico che sono interi Tipi: intero 'integer', 
+	end-declarations
+	
+	! Inizializzazione a partire dal file, il file non accetta la ',' come separatore
+	initializations from File
+		D O
+	end-initializations
+	
+	declarations
+		o: array(O) of real ! definire le variabili, l'insiemedi appartenenza e il tipo (in questo caso reali)
+		d: array(D) of real
+		c: dynamic array(P: range, P) of real ! in questa linea dichiaro 'c' e anche il rango 'P'
+		
+		! ho definito per le righe e per le colonne '(P, P)' e ho definito solo il tipo rango per le righe, per le colonne è implicito
+		! array dinamico perche la definisco solo per quelle rotte che esistono. Dico che e definito per l'insieme che e ti tipo ':' rango 'range'
+		! un rango e un tipo che si definisce da un valore intero a un valore finale; è un tipo di insieme(gli insiemi possono essere interi o range)
+		
+		x: dynamic array(P, P) of mpvar ! tipo 'mpvar' per identificarle come variabile di decisione
+		
+		Costo: linctr
+		! funz. Obiettivo, linear constrain 'linctr'
+	end-declarations
+	
+	! dichiarazione delle
+	initializations from File
+		o d c
+	end-initializations
+	
+	
+	! Definizione della funz. obiettivo, 
+	! la funzione obiettivo  rappresentata dalla funzione costo.
+	! Def. funnzione costo ':='
+	! funzione Somma 'sum'
+	! tale che '|'
+	! operazioni su insiemi: differenza '-', unione '+', intersezione '*'
+	!una volta definita la funzione obiettivo si devono vefinire le restrizioni
+		!forall
+	
+	forall(i, j in P | exists (c(i, j))) create (x(i,j)) ! è un po' come fosse una combinazione di un for con un if
+	
+	Costo := sum(i, j in P | exists(c(i, j))) c(i, j)*x(i, j) 
+	
+	forall(i in O) o(i)+sum(j in P | exists (c(j, i))) x(j, i) = sum(j in P | exists (c(i, j))) x(i, j)
+
+	forall(i in D) sum(j in P | exists(c(j, i))) x(j, i) = d(i) + sum(j in P | exists(c(i, j))) x(i, j)
+	
+	forall(i in P-(O+D))sum(j in P | exists (c(j, i))) x(j, i) = sum(j in P | exists (c(i, j))) x(i, j)
+
+	! NOTA: i c(i, j) sostituiscono quelle che sono le rotte, perchè se esiste un costo -> esiste una rotta
+	
+	minimize(Costo) ! Risoluzione del problema
+	
+	! Codice per aere la risposta a 'linea di comando'
+	writeln("Costo minimo de transporte:", getobjval*1000) ! per scrivere writeln -scrive saltando la linea- o write
+	!getobjval= get objective values
+	
+	forall (i, j in P | exists(c(i, j)) and getsol(x(i,j)) > epsilon)
+		writeln("Enviar ", strfmt(getsol(x(i, j))*1000, 7, 0), " Barriles del puerto ", strfmt(i, 3), " al puerto ", strfmt(j, 3) )
+		! strfmt                                   7 = #caratteri, 0 = #decimali            (i, 3)= indice del porto, #caratteri
+	! se ho solo un espressione va bene cosi, altrimneti devo porre dei 'do'
+	
+end-model

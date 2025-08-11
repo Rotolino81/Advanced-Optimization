@@ -1,0 +1,115 @@
+model Production
+uses "mmxprs";
+
+parameters
+	File = 'Produzione1.txt'
+	epsilon = 1E-6
+end-parameters
+
+declarations
+	P: set of integer
+	D: set of integer
+end-declarations
+
+initializations from File 
+	P D
+end-initializations
+	
+declarations
+	CostoD: array(P) of real
+	prodH: array(P) of integer
+	cambioH: array(P, P) of integer
+	InvIn: array(P) of integer
+	Inv: array(P, D) of mpvar
+	Demanda: array(P, D) of integer
+	y: array(P, P, D) of mpvar ! Variable toma 1 si se hace un cambio dal producto i a j el dia d
+	x: array(P, {0}+D) of mpvar ! Variable toma 1 si fabrico el producto i el dia d
+	q: array(P, D) of mpvar ! Varible indica la candidad de producto i producta el dia j
+	z: linctr
+end-declarations
+
+initializations from File
+	CostoD prodH cambioH InvIn Demanda
+end-initializations
+
+forall(i, j in P, d in D) create(y(i,j,d)) 
+forall(p in P, d in {0}+D) create(x(p,d))
+forall(p in P, d in D) create(q(p,d))
+
+! Function Objectivo
+z:= sum(d in D, p in P) CostoD(p)*Inv(p, d)
+
+! RESTRICTIONES
+! El dia 0 he producido el producto 3
+x(3, 0)=1
+
+! Cada dia produco un solo producto
+forall(d in D)
+	sum(p in P) x(p, d) = 1
+
+! costruction de la variable q(p, d)
+forall(d in D)
+	forall(p in P)
+		q(p, d)=prodH(p)*(24*x(p,d)-sum(j in P | j<>p)cambioH(j, p)*y(j, p, d))
+
+! Creation de la variable de inventario
+forall(d in D)
+	forall(p in P)
+		if d=1 then
+			Inv(p,d)=InvIn(p)+q(p,d)-Demanda(p, d)
+		else
+			Inv(p,d)=Inv(p, d-1)+q(p, d)-Demanda(p, d)
+		end-if
+		
+! Al final de la semana en el inventario debo tener al menos 250 unidades de cada p
+forall(p in P)
+	Inv(p, 7) >= 250
+
+! Cada dia el inventario debe se > 0	
+forall(d in D)
+	forall(p in P)
+		Inv(p,d)>=0
+
+! Restriction que dice che he hecho el cambio
+! y(j, p, d)=x(j, d-1)*x(p, d) PROBLEMA: es quadratica
+forall(d in D-{0})
+	forall(j, p in P | j<>p) do
+		y(j,p,d)<=x(j,d-1)
+		y(j,p,d)<=x(p,d)
+		y(j,p,d)>=x(j,d-1)+x(p,d)-1
+	end-do
+
+
+! Restrictiones de las variables: digo si son enteras o binarias
+forall(p in P, d in D)
+	x(p,d) is_binary
+forall(p, i in P, d in D | p<>i)
+	y(p,i,d) is_binary
+forall(p in P, d in D)
+	q(p,d) is_integer
+
+		
+! Quiero minimizar el costo: z
+minimize(z)       
+!writeln('y')       
+!forall(i, j in P)
+!	writeln(getsol(y(i,j,0)), ' ', getsol(y(i,j,1)), ' ', getsol(y(i,j,2)), ' ', getsol(y(i,j,3)), ' ', getsol(y(i,j,4)), ' ', getsol(y(i,j,5)), ' ', getsol(y(i,j,6)), ' ', getsol(y(i,j,7)), ' ')
+!writeln('x')
+!forall(i in P)	
+! 	writeln(getsol(x(i,0)), ' ', getsol(x(i,1)), ' ', getsol(x(i,2)), ' ', getsol(x(i,3)), ' ', getsol(x(i,4)), ' ', getsol(x(i,5)), ' ', getsol(x(i,6)), ' ', getsol(x(i,7)), ' ')
+ 
+writeln('Costo minimo ', getobjval)
+writeln('Invendario dia 0')
+forall(p in P)
+	writeln('	P', p, ': ', InvIn(p))
+forall(d in D) do
+	writeln('Giorno ', d, ':')
+	forall(p in P | getsol(x(p,d))>1-epsilon) 
+		writeln('	Production de ', getsol(q(p, d)), ' unidades de P', p)	
+	forall(p in P) do
+		writeln('	Demanda', p, ': ', Demanda(p,d))
+		writeln('	P', p, ': ', getsol(Inv(p, d)))
+	end-do
+end-do
+
+end-model

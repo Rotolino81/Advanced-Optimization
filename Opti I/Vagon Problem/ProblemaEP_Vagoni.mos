@@ -1,0 +1,55 @@
+!@encoding CP1252
+model ModelName
+	uses "mmxprs";
+	
+	parameters
+		File = "Vagoni.txt"
+		epsilon = 1E-6 
+	end-parameters
+	
+	declarations
+		m, n: integer
+		q: real
+	end-declarations
+	
+	initializations from File
+		m n q
+	end-initializations
+	
+	declarations
+		C = 1..16
+		V = 1..3
+		
+		p: array(C) of real
+		x: array(V,C) of mpvar
+		y: mpvar
+	end-declarations
+	
+	initializations from File
+		p
+	end-initializations
+	
+	forall (i in V, j in C)	create (x(i,j))
+	
+	forall (i in V) do
+		sum(j in C) p(j)*x(i,j)<=q
+		sum(j in C) p(j)*x(i,j)<=y
+	end-do
+	
+	forall (j in C) sum(i in V) x(i,j)=1	
+	forall(i in V, j in C) x(i,j) is_binary
+	
+	minimize(y)
+	
+	writeln("Peso minimo en quintales:", getobjval)
+	
+	forall (i in V) do
+		nCajas:= sum(j in C) x(i, j) ! conta #cajas por vagon
+		PesoTot:= sum(j in C) p(j)*x(i,j) ! conta el peso di todas las cajas en el vagon
+		writeln("Vagones ", i, ":")
+		writeln("   Estan ", getsol(nCajas), " cajas ", "pesan ", getsol(PesoTot))
+		forall (j in C | getsol (x(i, j))>1-epsilon)
+			writeln("      -Caja: ", j, ", peso: ", p(j)) ! muestra las cajas que estan en el vagon 'i' y el peso de cada caja
+	end-do
+	
+end-model 
