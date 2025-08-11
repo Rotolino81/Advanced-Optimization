@@ -1,0 +1,61 @@
+model Trial2
+	uses 'mmxprs'
+	
+	parameters
+		d=2 ! Doors
+		p=2  ! Prices: 1 Lady, 2 Tiger
+	end-parameters
+
+	declarations
+		x: array(1..d,1..p) of mpvar ! x(i,j)=1 if door i hides prize j, else 0
+		t: array(1..d) of mpvar ! t(i)=1 if statement on door i is true, else 0
+	end-declarations
+	
+	!!! Restrictions !!!
+		
+	! Each door hides 1 price
+	forall(i in 1..d)
+		sum(j in 1..p) x(i,j)=1
+	! If statement on door i is true then t(i)=1, else t(i)=0; with i=1,2
+	x(1,1)+x(2,1)-2*t(1)<=0
+	x(1,1)+x(2,1)-t(1)>=0
+	t(2)=x(1,2)	
+	! Statements are both true or both false
+	t(1)=t(2)
+	! Variables are both binary
+	forall(i in 1..d,j in 1..p)
+		x(i,j) is_binary
+	forall(i in 1..d)
+		t(i) is_binary
+			
+	!!! Objective Function !!!
+	minimise(0)
+	
+	!!! Prrinting results !!!	
+	writeln('		Results:')
+	writeln
+	forall(i in 1..d) do
+		forall(j in 1..p) do
+			if(getsol(x(i,j))=1) then
+				write('Behind the door ', i, ' there is the ')
+				if(j=1) then
+					writeln('lady', ' -> ', 'x(', i, ',', j, ')=', getsol(x(i,j)), " ")
+				else
+					writeln('tiger', ' -> ', 'x(', i, ',', j, ')=', getsol(x(i,j)), " ")
+				end-if
+			end-if	
+		end-do
+	end-do
+	writeln
+		
+	forall(i in 1..d) do
+		write('The statements are both ')
+		if(getsol(t(i))=1) then
+			write('true -> t(', i, ')=', getsol(t(i)))
+		else
+			write('false -> t(', i, ')=', getsol(t(i)))
+		end-if
+		writeln
+	end-do
+	
+end-model
