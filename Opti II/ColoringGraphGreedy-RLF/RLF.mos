@@ -1,0 +1,95 @@
+model ColoringGraphGreedy
+
+	forward procedure ReadDataFile
+	forward function argmax(Candidatos:set of integer): integer
+	forward procedure ComputeGreedyValues(Candidatos:set of integer)
+	forward procedure UpdateFeasibleSet(Candidatos:set of integer)
+	
+	declarations
+		delta:array(V:set of integer) of set of integer !Arreglo para almacenar los conjuntos de adyacencia
+		C:dynamic array(V) of set of integer !Arreglo para almacenar el color de los nodos
+		f:integer !Valor funcion objetivo
+		FeasibleSet:set of integer !Conjunto factible
+		F:set of integer !Conjunto factible
+		g:array(V) of integer !Vector de el valor voraz de cada nodo disponible
+		K:integer !Numero de colores
+		v:integer																					
+	end-declarations
+	
+	ReadDataFile
+	
+	!Algoritmo greedy
+	f:=0
+	K:=0
+	FeasibleSet:={1..getsize(V)}
+	
+	while(FeasibleSet<>{}) do
+		F:=FeasibleSet
+		C(K+1):={} 								
+		while(F<>{}) do
+			ComputeGreedyValues(F)
+			v:=argmax(F) !Selecciona el nodo con mayor número de adyacentes en F
+			C(K+1):=C(K+1)+{v} ! Asignacion nodo->color 
+			UpdateFeasibleSet(F) !Actualiza el conjunto factible F
+		end-do
+		writeln("Colore: ", K+1)
+		writeln("	Nodes: ", C(K+1))
+		FeasibleSet:=FeasibleSet-C(K+1) !Elimina los nodos coloreados en FeasibleSet
+		K:=K+1
+	end-do
+	
+	writeln("El grafo es ", K, " colorable")		
+	
+	!Procedimiento de lectura de las aristas del grafo y actualizar el conjunto de adyacencia de los nodos
+	procedure ReadDataFile
+		declarations
+			f:string
+			i:integer
+			j:integer
+		end-declarations
+		writeln("Archivo de datos: ")
+		read(f)
+		fopen(f, F_INPUT)
+		while(not iseof) do
+			read(i)
+			read(j)
+			delta(i):=delta(i)+{j}
+			delta(j):=delta(j)+{i}
+		end-do
+	end-procedure
+	
+	!Funcion que selecciona el nodo con el maximo número de adyacentes en el conjunto factible
+	function argmax(Candidatos:set of integer): integer
+		declarations									
+			kstar:integer
+		end-declarations
+		
+		maxu:=-MAX_REAL
+		forall(k in Candidatos) do
+			if g(k)>maxu then 
+				maxu:=g(k)
+				kstar:=k
+			end-if
+		end-do
+		returned:=kstar	!Nodo con el numero de adiacencia mayor
+	end-function
+	
+	!Procedimiento para calcular el valor voraz de cada nodo en el conjunto factible
+	procedure ComputeGreedyValues(Candidatos: set of integer)
+		forall(i in Candidatos) 
+			g(i):=getsize(delta(i)*FeasibleSet)
+	end-procedure
+	
+	!Procedimiento para actualizar el conjunto factible de nodos
+	procedure UpdateFeasibleSet(Candidatos:set of integer)
+		declarations
+			Aux: set of integer
+		end-declarations
+		
+		Candidatos:=Candidatos-{v} !Elimina el nodo seleccionado
+		Aux:=Candidatos
+		forall(k in Aux | k in delta(v)) 
+			Candidatos:=Candidatos-{k} !Elimina los adyacentes de v
+	end-procedure
+
+end-model

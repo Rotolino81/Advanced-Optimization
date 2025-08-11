@@ -1,0 +1,98 @@
+!@encoding CP1252
+model Knapsack
+	forward procedure ReadDataFile(filename: string)
+	forward function argmax: integer
+	forward procedure UpdateF
+	
+	declarations
+		item=record  !Tipo de dato item
+			w: integer ! weight
+			g: integer ! gain
+			cost: real ! gain/weight
+		end-record
+		
+		I: dynamic array(range) of item ! Arreglo de los items
+		f: real ! Valor de la función objetivo 
+		F: set of integer ! Conjunto de elementos factibles
+		
+		maxWeight: integer
+		totWeight: integer
+		
+		S: dynamic array(range) of item ! 
+		filename: string ! Nombre del archivo de datos
+		idxBestIt: integer ! Index item seleccionado
+		idxS: integer ! Idx en el arreglo de S
+	end-declarations
+	
+	writeln("Data file name: ")
+	read(filename)
+	
+	ReadDataFile(filename)
+	
+	f:=0
+	F:={1..getsize(I)}
+	maxWeight:=60
+	totWeight:=0
+	
+	idxS:=0
+	writeln("Items mejor soluction")
+	while(F <> {}) do
+		idxBestIt:=argmax
+		idxS:=idxS+1
+		totWeight:=totWeight+I(idxBestIt).w
+		S(idxS):=I(idxBestIt)
+		writeln("Peso: ",S(idxS).w,", Gain: ",S(idxS).g,", Utilita: ",S(idxS).cost)
+		f:=f+S(idxS).w
+		UpdateF
+	end-do
+	writeln("Objective function value: ", f)
+	
+	procedure ReadDataFile(f: string)
+		declarations
+			items: item ! item
+			nIt: integer !número total de items
+		end-declarations
+		
+		fopen(f, F_INPUT)
+		nIt:=0
+		while (not iseof) do
+			read(items.w)
+			read(items.g)
+			items.cost:=items.g/items.w
+			nIt:=nIt+1
+			I(nIt):=items
+		end-do
+	end-procedure
+	
+	function argmax: integer
+		declarations
+			m: real
+		end-declarations
+		
+		m:=-1
+		forall(k in F) do
+			if (I(k).cost>m) then
+				m:=I(k).cost
+				kstar:=k
+			end-if
+		end-do
+		returned:=kstar			
+	end-function
+	
+	procedure UpdateF
+		declarations
+			S: set of integer
+		end-declarations
+		
+		F:=F-{idxBestIt} ! commenta si se quire que en la mochilla estaran mas que 1 item del mismo tipo
+		S:=F
+		forall(k in S) do
+			if I(k).w+totWeight>maxWeight then
+				F:=F-{k}
+			end-if
+		end-do
+	end-procedure
+	
+	
+end-model
+

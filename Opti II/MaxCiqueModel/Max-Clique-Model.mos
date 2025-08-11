@@ -1,0 +1,50 @@
+!@encoding CP1252
+model ModelName
+	uses "mmxprs"
+	!Procedimiento para la lectura de los datos
+	forward procedure Lectura
+		
+	declarations
+		V: set of integer !Conjunto de nodos
+		E: dynamic array(V,V) of boolean !matriz dinámica para almacenar las aristas del grafo
+		x: dynamic array(V) of mpvar !Variables de decisión: 1 si i pertenece al clique, 0 en otro caso
+		C: set of integer !Clique
+	end-declarations
+	
+	!Llamar al procedimiento para la lectura de las aristas del grafo
+	Lectura
+	
+	!Crear las variables de decisión
+	forall(i in V) do
+		create(x(i))
+		x(i) is_binary
+	end-do
+	
+	!Función objetivo
+	z := sum(i in V) x(i)
+	
+	!Restricciones, si no existe una arista para el para de nodos i,j, como mucho uno de ellos puede pertenecer al clique
+	forall(i,j in V | i<>j and not exists(E(i,j)) and not exists(E(j,i))) x(i)+x(j) <= 1
+	maximize(z)
+	
+	writeln("Cardinalidad del máximo clique: ", getobjval)
+	forall(i in 1..getsize(V) | getsol(x(i))>1-1E-4) C+={i}
+	writeln("Clique: ", C)
+	
+	!Procedimiento para la lectura de las aristas
+	procedure Lectura
+		declarations
+			i,j: integer
+			f: string
+		end-declarations
+		writeln("Archivo de datos: ")
+		read(f)
+		fopen(f,F_INPUT)
+		while(not iseof) do
+			read(i)
+			read(j)
+			E(i,j):=true
+		end-do
+		fclose(F_INPUT)
+	end-procedure
+	

@@ -1,0 +1,88 @@
+!@encoding CP1252
+model MaxClique
+forward procedure ReadDataFile(filename: string)
+forward function argmax: integer
+forward function MaxClique: set of integer
+forward procedure Update()
+
+declarations
+	V: set of integer ! set di vertici
+    edges=record  ! defnizione di link tramite 2 nodi
+ 		i: integer 
+        j: integer 
+    end-record
+    E: dynamic array(range) of edges ! set di edges 
+    filename: string
+    !f: real !valore obj. func
+    F: set of integer ! set che vado ad aggiornare per avere una soluz. feasible
+    clique: set of integer ! def del clique
+end-declarations
+
+! Lettura file
+writeln("Data file name: ")
+read(filename)
+ReadDataFile(filename)
+    
+! Inizializzazione del conjunto feasible (Tutti in nodi)
+F:=V
+    
+! Calcolo max clique
+clique:=MaxClique
+
+writeln("Maximum Clique found: ", clique)
+    writeln("Size of Maximum Clique: ", getsize(clique))
+
+    procedure ReadDataFile(f: string)
+        declarations
+            edge: edges ! Arista temporanea
+            nedges: integer
+        end-declarations
+        fopen(f, F_INPUT)
+        while (not iseof) do
+        	nedges:=0
+            read(edge.i)
+            read(edge.j)
+            nedges:= nedges+1
+            E(nedges) := edge
+            V := V + {edge.i, edge.j}
+        end-do
+    end-procedure
+
+    function MaxClique: set of integer    	
+        declarations 
+            clique: set of integer ! clique che vado a costruire
+            selected: integer ! nodo selezionato aggiunto al clique
+        end-declarations
+        clique:={}
+        F:=V
+        
+        while (F <> {}) do
+            selected:=argmax ! il nodo selezionato è quello che massimizza la funzione argmax
+            clique:=clique+{selected} ! aggiungo il nodo selected al clique
+            writeln("Selected node: ", selected)
+            UPDATE(F)
+        end-do
+        returned:=clique
+    end-function
+
+    function argmax: integer ! funzione che trova il nodo con il grado massimo
+    declarations
+        max_degree: integer ! veriabile che vado ad aggiornare
+        sel_node: integer ! nodo che seleziono
+        degree: integer ! variabile del nodo
+    end-declarations
+    
+    max_degree:=-1
+    sel_node:=-1
+    
+    forall(v in F) do
+        degree := sum(e in E | (e.u=v or e.v=v) and (e.u in F and e.v in F))
+        if degree>max_degree then
+            max_degree:=degree
+            sel_node:=v
+        end-if
+    end-do
+    returned:=sel_node
+	end-function
+
+end-model
