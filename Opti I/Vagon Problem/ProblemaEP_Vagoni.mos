@@ -1,4 +1,3 @@
-!@encoding CP1252
 model ModelName
 	uses "mmxprs";
 	
@@ -53,3 +52,4 @@ model ModelName
 	end-do
 	
 end-model 
+
