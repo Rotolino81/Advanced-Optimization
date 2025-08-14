@@ -1,4 +1,4 @@
-model ModelName
+model AntColoringGraph
 
 forward procedure ReadDataFile
 forward function arg_max(A: set of integer) : integer
@@ -170,3 +170,4 @@ end-function
 
 
 end-model
+
