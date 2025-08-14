@@ -1,4 +1,3 @@
-!@encoding CP1252
 model TABUKCOL
 	!uses 'mmsystems'
 	declarations
@@ -38,13 +37,13 @@ model TABUKCOL
 	
 	ReadData
 	
-	writeln("Número de clases de color: ")
+	writeln("NÃºmero de clases de color: ")
 	read(K)
-	writeln("Número máximo de iteraciones: ")
+	writeln("NÃºmero mÃ¡ximo de iteraciones: ")
 	read(nbmax)
-	writeln("Número de soluciones vecinas: ")
+	writeln("NÃºmero de soluciones vecinas: ")
 	read(rep)
-	writeln("Iteraciones para atributo tabú: ")
+	writeln("Iteraciones para atributo tabÃº: ")
 	read(T)
 	
 	f:=random_init
@@ -92,7 +91,7 @@ model TABUKCOL
 	if fstar=0 then
 		forall(k in 1..K) writeln("Clase ",strfmt(k,3), ": ", Sstar(k))
 	else		
-		writeln("No se pudo encontrar una solución factible")
+		writeln("No se pudo encontrar una soluciÃ³n factible")
 	end-if
 	
 	procedure ReadData
@@ -204,4 +203,5 @@ model TABUKCOL
 	end-procedure
 	
 end-model
+
 
