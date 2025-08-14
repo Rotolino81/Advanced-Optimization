@@ -1,5 +1,5 @@
-!@encoding CP1252
 model Knapsack
+
 	forward procedure ReadDataFile(filename: string)
 	forward function argmax: integer
 	forward procedure UpdateF
@@ -12,7 +12,7 @@ model Knapsack
 		end-record
 		
 		I: dynamic array(range) of item ! Arreglo de los items
-		f: real ! Valor de la función objetivo 
+		f: real ! Valor de la funciÃ³n objetivo 
 		F: set of integer ! Conjunto de elementos factibles
 		
 		maxWeight: integer
@@ -50,7 +50,7 @@ model Knapsack
 	procedure ReadDataFile(f: string)
 		declarations
 			items: item ! item
-			nIt: integer !número total de items
+			nIt: integer !nÃºmero total de items
 		end-declarations
 		
 		fopen(f, F_INPUT)
@@ -95,4 +95,5 @@ model Knapsack
 	
 	
 end-model
+
 
