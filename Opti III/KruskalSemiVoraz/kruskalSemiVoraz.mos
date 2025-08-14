@@ -1,11 +1,10 @@
-!@encoding CP1252
 model Kruskal
 	forward procedure ReadDataFile(filename: string)
 	forward function argmin: integer
 	forward procedure UpdateF
 	
 	declarations
-		V: set of integer !Conjunto de vÈrtices o nodos
+		V: set of integer !Conjunto de v√©rtices o nodos
 		edges=record  !Tipo de dato arista
 			i: integer !Primer nodo de la arista
 			j: integer !Segundo nodo de la arista
@@ -14,14 +13,14 @@ model Kruskal
 		alfa: real		
 		g: array(V) of integer
 		E: dynamic array(range) of edges !Arreglo de las aristas del grafo
-		f: real !Valor de la funciÛn objetivo 
+		f: real !Valor de la funci√≥n objetivo 
 		F: set of integer !Conjunto de elementos factibles
-		S: dynamic array(range) of edges !Aristas del ·rbol generador
+		S: dynamic array(range) of edges !Aristas del √°rbol generador
 
 		d: dynamic array (range, range) of real ! Distancia entre los nodos
 		filename: string !Nombre del archivo de datos
-		edgestar: integer !Õndice de la arista seleccionada
-		Sedges: integer !Õndice en el arreglo de aristas del ·rbol
+		edgestar: integer !√çndice de la arista seleccionada
+		Sedges: integer !√çndice en el arreglo de aristas del √°rbol
 		n: integer
 	end-declarations
 	
@@ -41,7 +40,7 @@ model Kruskal
 	f:=0
 	F:={1..getsize(E)}
 	Sedges:=0
-	writeln("Aristas del ·rbol generador")
+	writeln("Aristas del √°rbol generador")
 	while(Sedges < n) do
 		edgestar:=argmin
 		g(E(edgestar).i)+=1
@@ -117,4 +116,5 @@ model Kruskal
         end-do
     end-procedure
 	
+
 end-model
