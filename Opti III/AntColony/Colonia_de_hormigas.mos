@@ -1,4 +1,3 @@
-!@encoding CP1252
 model Hormigas
 
 declarations
@@ -21,15 +20,15 @@ initializations from File
 	d
 end-initializations
 
-writeln("Número de hormigas")
+writeln("NÃºmero de hormigas")
 read(m)
-writeln("Número de iteraciones sin mejorar")
+writeln("NÃºmero de iteraciones sin mejorar")
 read(nbiter)
-writeln("Factor de evaporación (valor entre 0 y 1):")
+writeln("Factor de evaporaciÃ³n (valor entre 0 y 1):")
 read(rho)
-writeln("Valor del parámetro alpha: ")
+writeln("Valor del parÃ¡metro alpha: ")
 read(alpha)
-writeln("Valor del parámetro betha: ")
+writeln("Valor del parÃ¡metro betha: ")
 read(beta)
 
 
@@ -85,7 +84,7 @@ while(not StopCriterion) do
 	forall(k in 1..m) do
 		L(k)+=d(Tour(k,n),Tour(k,1))
 		if L(k)<BestCost then
-			writeln("Iteración: ",strfmt(t,4)," Hormiga: ", strfmt(k,4), " Valor: ", strfmt(L(k),10,2))
+			writeln("IteraciÃ³n: ",strfmt(t,4)," Hormiga: ", strfmt(k,4), " Valor: ", strfmt(L(k),10,2))
 			BestCost:=L(k)
 			forall(l in 1..n) BestTour(l):=Tour(k,l)
 			last:=t
@@ -103,3 +102,4 @@ while(not StopCriterion) do
 end-do
 		
 end-model
+
