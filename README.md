@@ -1,5 +1,5 @@
 # Advanced-Optimization
-This is the repository of the course 'Advance Optimization' in UDLAP university uisng the lenguage Xpress Mosel
-
-There are 3 different parts: Integer Programming, Heuristics and Metaheuristics. 
+This is the repository of the course 'Advance Optimization'. \\
+The course was splitted in 3 different main topics. Integer Programming, Heuristics and Metaheuristics. \\
+To compute and solve the problems I used the Xpress Mosel program lenguage. \\
 
