@@ -1,5 +1,5 @@
-!@encoding CP1252
 model MaxClique
+
 	forward procedure ReadDataFile
 	forward function argmax(Candidatos: set of integer): integer
 	forward procedure ComputeGreedyValues(Candidatos: set of integer)
@@ -8,8 +8,8 @@ model MaxClique
 	declarations
 		delta: array(V:set of integer) of set of integer !Arreglo para almacenar los conjunto de adyacencia de los nodos
 		C: set of integer !Clique
-		f: integer !Valor de la funci髇 objetivo
-		FeasibleSet: set of integer	!Conjunto factible de elementos (nodos que a鷑 pueden ser a馻didos al clique)
+		f: integer !Valor de la funci贸n objetivo
+		FeasibleSet: set of integer	!Conjunto factible de elementos (nodos que a煤n pueden ser a帽adidos al clique)
 		g: array(V) of integer !Vector para almacenar el valor voraz de cada nodo del conjunto factible
 	end-declarations
 
@@ -28,7 +28,7 @@ model MaxClique
 	end-do
 	
 	writeln("El conjunto de nodos del clique es: ", C)
-  	writeln("El tama駉 del clique es: ", f)
+  	writeln("El tama帽o del clique es: ", f)
 	
 	(!Procedimiento para la lectura de las aristas de grafo y
 	  actualizar el conjunto de nodos y los conjuntos de adyacencia!)
@@ -50,7 +50,7 @@ model MaxClique
 		end-do
 	end-procedure
 	
-	(!Funci髇 para seleccionar un nodo con el m醲imo de nodos adyacentes
+	(!Funci贸n para seleccionar un nodo con el m谩ximo de nodos adyacentes
 	  a los nodos del conjunto factible!)
 	function argmax(Candidates: set of integer): integer
 		maxu:=-MAX_REAL
@@ -63,13 +63,13 @@ model MaxClique
 		returned:=kstar			
 	end-function
 	
-	(!Procedimiento para calular el valor de la funci髇 voraz
+	(!Procedimiento para calular el valor de la funci贸n voraz
 	  de cada uno de los nodos del grafo!)
 	procedure ComputeGreedyValues(Candidates: set of integer)
 		forall(i in Candidates) g(i):=getsize(delta(i)*FeasibleSet)
 	end-procedure
 	
-	!Procemiento para la actualizaci髇 del conjunto factible de elementos
+	!Procemiento para la actualizaci贸n del conjunto factible de elementos
 	procedure UpdateFeasibleSet(Candidates: set of integer)
 		declarations
 			Aux: set of integer
@@ -79,4 +79,5 @@ model MaxClique
 		forall(k in Aux | k not in delta(v)) Candidates-={k}
 	end-procedure
 	
+
 end-model	
