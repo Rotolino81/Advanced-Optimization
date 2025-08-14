@@ -1,23 +1,23 @@
-!@encoding CP1252
 model Kruskal
+
 	forward procedure ReadDataFile(filename: string)
 	forward function argmin: integer
 	forward procedure UpdateF
 	
 	declarations
-		V: set of integer !Conjunto de vÈrtices o nodos
+		V: set of integer !Conjunto de v√©rtices o nodos
 		edges=record  !Tipo de dato arista
 			i: integer !Primer nodo de la arista
 			j: integer !Segundo nodo de la arista
 			cost: real !Costo de la arista
 		end-record
 		E: dynamic array(range) of edges !Arreglo de las aristas del grafo
-		f: real !Valor de la funciÛn objetivo 
+		f: real !Valor de la funci√≥n objetivo 
 		F: set of integer !Conjunto de elementos factibles
-		S: dynamic array(range) of edges !Aristas del ·rbol generador
+		S: dynamic array(range) of edges !Aristas del √°rbol generador
 		filename: string !Nombre del archivo de datos
-		edgestar: integer !Õndice de la arista seleccionada
-		Sedges: integer !Õndice en el arreglo de aristas del ·rbol
+		edgestar: integer !√çndice de la arista seleccionada
+		Sedges: integer !√çndice en el arreglo de aristas del √°rbol
 	end-declarations
 	
 	writeln("Data file name: ")
@@ -33,7 +33,7 @@ model Kruskal
 	f:=0
 	F:={1..getsize(E)}
 	Sedges:=0
-	writeln("Aristas del ·rbol generador")
+	writeln("Aristas del √°rbol generador")
 	while(F <> {}) do
 		edgestar:=argmin
 		Sedges:=Sedges+1
@@ -47,7 +47,7 @@ model Kruskal
 	procedure ReadDataFile(f: string)
 		declarations
 			edge: edges !arista
-			nbedges: integer !n˙mero total de aristas
+			nbedges: integer !n√∫mero total de aristas
 		end-declarations
 		
 		fopen(f, F_INPUT)
@@ -90,3 +90,4 @@ model Kruskal
 	
 	
 end-model
+
