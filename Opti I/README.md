@@ -32,8 +32,6 @@ The goal is to determine the optimal quantity of oil to transport between differ
 
 This problem is an example of a transportation and network flow model.
 
----
-
 ### Production Planning Problem
 
 The `Production Problem` folder contains an **Integer Programming** model for a production planning problem.
@@ -41,8 +39,6 @@ The `Production Problem` folder contains an **Integer Programming** model for a 
 The goal is to determine the optimal production schedule over a planning horizon of 7 days, while minimizing inventory costs and satisfying demand, production capacity and inventory requirements.
 
 This problem is an example of production planning and inventory management using integer decision variables.
-
----
 
 ### Wagon Loading Problem
 
@@ -52,27 +48,26 @@ The goal is to assign a set of boxes to a fixed number of wagons while respectin
 
 This problem is an example of an assignment and load balancing model with binary decision variables.
 
-
 ---
 
 ## Repository Structure
 
 ```text
-Opti I/
+01-linear-and-integer-programming/
 │
 ├── README.md
 │
-├── Oil Problem/
+├── oil-transportation-problem/
 │   ├── README.md
 │   ├── ProblemaLP_TransportePetroleo.mos
 │   └── TransportePetroleo.txt
 │
-├── Production Problem/
+├── production-planning-problem/
 │   ├── README.md
 │   ├── ProductionOpt.mos
 │   └── Produzione1.txt
 │
-└── Vagon Problem/
+└── wagon-loading-proble/
     ├── README.md
     ├── ProblemaEP_Vagoni.mos
     └── Vagoni.txt
