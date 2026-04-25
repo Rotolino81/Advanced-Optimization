@@ -51,6 +51,8 @@ Production Problem/
 - `Produzione1.txt`  
   Input data file containing the products, days, demand values, initial inventory, production rates, inventory costs and changeover times.
 
+<!--
+
 ---
 
 ## How to Run
@@ -58,3 +60,5 @@ Production Problem/
 To run the model, open `ProductionOpt.mos` in **FICO Xpress Mosel**.
 
 Make sure that `Produzione1.txt` is located in the same folder as the model file.
+
+-->
