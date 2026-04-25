@@ -2,25 +2,32 @@
 
 This section contains the first part of the **Advanced Optimization** course project.
 
-The focus of this module is on the formulation and implementation of mathematical optimization models, mainly based on **Linear Programming** and **Integer Programming**, applied to real-world decision-making problems.
+The focus of this module is on the formulation and implementation of exact optimization models, mainly based on **Linear Programming** and **Integer Programming**, applied to real-world decision-making problems.
 
-The models are implemented using **Xpress Mosel** and are designed to solve practical optimization problems such as transportation planning, production scheduling and wagon loading.
+The models are implemented in **Xpress Mosel**.
 
 ---
 
 ## Overview
 
-The objective of this section is to translate real-world problems into mathematical optimization models.
+This section presents three optimization problems inspired by practical applications in logistics, production planning and resource allocation.
 
-Each problem is formulated by defining:
+Each problem is modeled by identifying the main elements of a mathematical optimization formulation:
 
 - decision variables;
 - objective function;
-- operational constraints;
+- constraints;
 - input data;
-- optimal solution and interpretation of the results.
+- optimal solution.
 
-The problems included in this section show how optimization can be used to support decisions in logistics, production and resource allocation.
+The goal is to show how real-world operational problems can be translated into mathematical models and solved using an exact optimization solver.
+
+The problems included in this section cover different application areas:
+
+- transportation planning;
+- production scheduling;
+- inventory management;
+- assignment and load balancing.
 
 ---
 
@@ -29,23 +36,109 @@ The problems included in this section show how optimization can be used to suppo
 ```text
 Opti I/
 │
+├── README.md
+│
 ├── Oil Problem/
+│   ├── README.md
 │   ├── ProblemaLP_TransportePetroleo.mos
-│   ├── TransportePetroleo.txt
-│   ├── ProblemaLP_TransportePetroleo.bim
-│   └── ProblemaLP_TransportePetroleo.bdg
+│   └── TransportePetroleo.txt
 │
 ├── Production Problem/
+│   ├── README.md
 │   ├── ProductionOpt.mos
-│   ├── Produzione1.txt
-│   ├── Proyecto de modelado.pdf
-│   ├── ProductionOpt.bim
-│   └── ProductionOpt.bdg
+│   └── Produzione1.txt
 │
 └── Vagon Problem/
+    ├── README.md
     ├── ProblemaEP_Vagoni.mos
-    ├── Vagoni.txt
-    ├── Caso de clase - Asignación de cajas a vagones(1) (1).pdf
-    ├── vagones(1).py
-    ├── ProblemaEP_Vagoni.bim
-    └── ProblemaEP_Vagoni.bdg
+    └── Vagoni.txt
+```
+
+---
+
+## Problems Included
+
+### Oil Transportation Problem
+
+The `Oil Problem` folder contains a **Linear Programming** model for an oil transportation problem.
+
+The goal is to determine the optimal quantity of oil to transport between different ports while minimizing the total transportation cost and satisfying supply, demand and flow conservation constraints.
+
+This problem is an example of a transportation and network flow model.
+
+---
+
+### Production Planning Problem
+
+The `Production Problem` folder contains an **Integer Programming** model for a production planning problem.
+
+The goal is to determine the optimal production schedule over a planning horizon of 7 days, while minimizing inventory costs and satisfying demand, production capacity and inventory requirements.
+
+This problem is an example of production planning and inventory management using integer decision variables.
+
+---
+
+### Wagon Loading Problem
+
+The `Vagon Problem` folder contains an **Integer Programming** model for a wagon loading problem.
+
+The goal is to assign a set of boxes to a fixed number of wagons while respecting the maximum capacity of each wagon and balancing the total load among them.
+
+This problem is an example of an assignment and load balancing model with binary decision variables.
+
+---
+
+## Technologies Used
+
+The models in this section are implemented using:
+
+```text
+Xpress Mosel
+```
+
+The main file types are:
+
+```text
+.mos   Mosel source code
+.txt   Input data files
+.md    Project documentation
+```
+
+The `.mos` files contain the mathematical models, while the `.txt` files contain the input data required to run each model.
+
+---
+
+## How to Run
+
+To run one of the models:
+
+1. Open the desired problem folder.
+2. Open the corresponding `.mos` file in **FICO Xpress Mosel**.
+3. Make sure that the related `.txt` data file is located in the same folder.
+4. Run the model.
+5. Analyze the solution printed by the solver.
+
+Example:
+
+```text
+Oil Problem/
+│
+├── ProblemaLP_TransportePetroleo.mos
+└── TransportePetroleo.txt
+```
+
+Open `ProblemaLP_TransportePetroleo.mos` in **FICO Xpress Mosel** and run the model.
+
+---
+
+## Notes
+
+Generated files such as `.bim` and `.bdg` are not included in the cleaned project structure because they are automatically created by Xpress Mosel.
+
+The original PDF problem statements have been replaced by individual `README.md` files inside each problem folder, making the repository easier to read and navigate.
+
+---
+
+## Author
+
+Alessio Ferrari
