@@ -33,7 +33,7 @@ This is an example of a **Linear Programming** problem applied to transportation
 ## Files
 
 ```text
-Oil Problem/
+oil-transportation-problem/
 │
 ├── README.md
 ├── oilTransportation.mos
