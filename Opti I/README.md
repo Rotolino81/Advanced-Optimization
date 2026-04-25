@@ -22,10 +22,6 @@ Each problem is modeled by identifying the main elements of a mathematical optim
 
 The goal is to show how real-world operational problems can be translated into mathematical models and solved using an exact optimization solver.
 
----
-
-## Problems Included
-
 The problems described in this section cover different application areas:
 
 ### Oil Transportation Problem
