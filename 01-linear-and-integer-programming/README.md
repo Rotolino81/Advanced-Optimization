@@ -78,13 +78,7 @@ This problem is an example of an assignment and load balancing model with binary
 
 ## Content
 
-The models in this section are implemented using:
-
-```text
-Xpress Mosel
-```
-
-The main file types are:
+Each folder contains:
 
 ```text
 .mos   Mosel source code
