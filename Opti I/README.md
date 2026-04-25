@@ -22,41 +22,11 @@ Each problem is modeled by identifying the main elements of a mathematical optim
 
 The goal is to show how real-world operational problems can be translated into mathematical models and solved using an exact optimization solver.
 
-The problems included in this section cover different application areas:
-
-- transportation planning;
-- production scheduling;
-- inventory management;
-- assignment and load balancing.
-
----
-
-## Repository Structure
-
-```text
-Opti I/
-│
-├── README.md
-│
-├── Oil Problem/
-│   ├── README.md
-│   ├── ProblemaLP_TransportePetroleo.mos
-│   └── TransportePetroleo.txt
-│
-├── Production Problem/
-│   ├── README.md
-│   ├── ProductionOpt.mos
-│   └── Produzione1.txt
-│
-└── Vagon Problem/
-    ├── README.md
-    ├── ProblemaEP_Vagoni.mos
-    └── Vagoni.txt
-```
-
 ---
 
 ## Problems Included
+
+The problems described in this section cover different application areas:
 
 ### Oil Transportation Problem
 
@@ -86,9 +56,35 @@ The goal is to assign a set of boxes to a fixed number of wagons while respectin
 
 This problem is an example of an assignment and load balancing model with binary decision variables.
 
+
 ---
 
-## Technologies Used
+## Repository Structure
+
+```text
+Opti I/
+│
+├── README.md
+│
+├── Oil Problem/
+│   ├── README.md
+│   ├── ProblemaLP_TransportePetroleo.mos
+│   └── TransportePetroleo.txt
+│
+├── Production Problem/
+│   ├── README.md
+│   ├── ProductionOpt.mos
+│   └── Produzione1.txt
+│
+└── Vagon Problem/
+    ├── README.md
+    ├── ProblemaEP_Vagoni.mos
+    └── Vagoni.txt
+```
+
+---
+
+## Content
 
 The models in this section are implemented using:
 
