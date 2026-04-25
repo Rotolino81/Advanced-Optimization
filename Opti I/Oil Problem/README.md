@@ -48,6 +48,8 @@ Oil Problem/
 - `TransportePetroleo.txt`  
   Input data file containing the transportation network, supply values, demand values and transportation costs.
 
+<!--
+
 ---
 
 ## How to Run
@@ -55,3 +57,5 @@ Oil Problem/
 To run the model, open `ProblemaLP_TransportePetroleo.mos` in **FICO Xpress Mosel**.
 
 Make sure that `TransportePetroleo.txt` is located in the same folder as the model file.
+
+-->
