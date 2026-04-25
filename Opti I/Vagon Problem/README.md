@@ -22,10 +22,13 @@ Each box must be assigned to exactly one wagon.
 The objective is to minimize the maximum total weight assigned to any wagon.  
 In this way, the model tries to distribute the boxes as evenly as possible among the wagons, while ensuring that no wagon exceeds its capacity.
 
-This is an example of an **Integer Programming** problem with binary decision variables:
+This is an example of an **Integer Programming** problem with binary decision variables.
 
-  The model uses binary variables to represent the assignment of boxes to wagons:
-  
-  ```text
-  x(i,j) = 1 if box j is assigned to wagon i
-  x(i,j) = 0 otherwise
+---
+
+```text
+Vagon Problem/
+│
+├── README.md
+├── ProblemaEP_Vagoni.mos
+└── Vagoni.txt
