@@ -45,10 +45,14 @@ Vagon Problem/
 - `Vagoni.txt`  
   Input data file containing the number of wagons, the number of boxes, the wagon capacity and the weight of each box.
 
----
+<!--
 
+---
+ 
 ## How to Run
 
 To run the model, open `ProblemaEP_Vagoni.mos` in **FICO Xpress Mosel**.
 
-Make sure that `Vagoni.txt` is located in the same folder as the model file.
+Make sure that `Vagoni.txt` is located in the same folder as the model file. 
+
+ -->
