@@ -100,5 +100,4 @@ The `.mos` files contain the mathematical models, while the `.txt` files contain
 
 Generated files such as `.bim` and `.bdg` are not included in the cleaned project structure because they are automatically created by Xpress Mosel.
 
-The original PDF problem statements have been replaced by individual `README.md` files inside each problem folder, making the repository easier to read and navigate.
 
