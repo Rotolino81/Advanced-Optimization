@@ -30,19 +30,19 @@ This is an example of an **Integer Programming** problem with binary decision va
 ## Files
 
 ```text
-Vagon Problem/
+wagon-loading-problem/
 │
 ├── README.md
-├── ProblemaEP_Vagoni.mos
-└── Vagoni.txt
+├── wagonLoading.mos
+└── wagonLoadingData.txt
 ```
 
 ### File Description
 
-- `ProblemaEP_Vagoni.mos`  
+- `wagonLoading.mos`  
   Main Xpress Mosel model. It defines the decision variables, constraints and objective function.
 
-- `Vagoni.txt`  
+- `wagonLoadingData.txt`  
   Input data file containing the number of wagons, the number of boxes, the wagon capacity and the weight of each box.
 
 <!--
