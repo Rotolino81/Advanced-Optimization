@@ -36,19 +36,19 @@ This is an example of an **Integer Programming** problem applied to production p
 ## Files
 
 ```text
-Production Problem/
+production-planning-problem/
 │
 ├── README.md
-├── ProductionOpt.mos
-└── Produzione1.txt
+├── productionPlanning.mos
+└── productionPlanningData.txt
 ```
 
 ### File Description
 
-- `ProductionOpt.mos`  
+- `productionPlanning.mos`  
   Main Xpress Mosel model. It defines the decision variables, constraints and objective function.
 
-- `Produzione1.txt`  
+- `productionPlanningData.txt`  
   Input data file containing the products, days, demand values, initial inventory, production rates, inventory costs and changeover times.
 
 <!--
