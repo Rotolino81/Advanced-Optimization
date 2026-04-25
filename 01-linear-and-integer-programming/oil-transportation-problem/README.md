@@ -36,16 +36,16 @@ This is an example of a **Linear Programming** problem applied to transportation
 Oil Problem/
 │
 ├── README.md
-├── ProblemaLP_TransportePetroleo.mos
-└── TransportePetroleo.txt
+├── oilTransportation.mos
+└── oilTransportationData.txt
 ```
 
 ### File Description
 
-- `ProblemaLP_TransportePetroleo.mos`  
+- `oilTransportation.mos`  
   Main Xpress Mosel model. It defines the decision variables, constraints and objective function.
 
-- `TransportePetroleo.txt`  
+- `oilTransportationData.txt`  
   Input data file containing the transportation network, supply values, demand values and transportation costs.
 
 <!--
