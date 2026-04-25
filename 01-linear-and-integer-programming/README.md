@@ -59,8 +59,8 @@ This problem is an example of an assignment and load balancing model with binary
 │
 ├── oil-transportation-problem/
 │   ├── README.md
-│   ├── ProblemaLP_TransportePetroleo.mos
-│   └── TransportePetroleo.txt
+│   ├── oilTransportation.mos
+│   └── oilTransportationData.txt
 │
 ├── production-planning-problem/
 │   ├── README.md
