@@ -26,6 +26,8 @@ This is an example of an **Integer Programming** problem with binary decision va
 
 ---
 
+## Files
+
 ```text
 Vagon Problem/
 │
