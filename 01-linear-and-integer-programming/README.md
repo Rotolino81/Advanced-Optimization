@@ -64,13 +64,14 @@ This problem is an example of an assignment and load balancing model with binary
 │
 ├── production-planning-problem/
 │   ├── README.md
-│   ├── ProductionOpt.mos
-│   └── Produzione1.txt
+│   ├── productionPlanning.mos
+│   └── productionPlanningData.txt
 │
 └── wagon-loading-proble/
     ├── README.md
-    ├── ProblemaEP_Vagoni.mos
-    └── Vagoni.txt
+    ├── wagonLoading.mos
+    └── wagonLoadingData.txt
+
 ```
 
 ---
