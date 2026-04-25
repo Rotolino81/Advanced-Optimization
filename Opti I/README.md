@@ -1,4 +1,4 @@
-# Opti I — Integer Programming Models
+# Integer Programming Models
 
 This section contains the first part of the **Advanced Optimization** course project.
 
